@@ -1,42 +1,66 @@
-'use client'
-import React, { useState } from 'react';
-import { TextField, Button, Container, Box, Typography } from '@mui/material';
-import { useAppDispatch } from '@/app/redux/hooks';
-import { setUser } from '@/app/redux/slices/userSlice';
-import { useRouter } from 'next/navigation';
+"use client";
+import React, { useState } from "react";
+import { TextField, Button, Container, Box, Typography } from "@mui/material";
+import { useAppDispatch } from "@/app/redux/hooks";
+import { setUser, toggleEmailVerification } from "@/app/redux/slices/userSlice";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+
 export default function LoginPage() {
-  const [Email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [userData, setUserData] = useState('');
+  const [Email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [userData, setUserData] = useState("");
   const dispatch = useAppDispatch();
   const route = useRouter();
- const handleSubmit = async (event: React.FormEvent) => {
-  event.preventDefault();
-  try {
-    const response = await fetch('http://localhost:3000/user/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: Email, // or use 'email' if your backend expects 'email'
-        password: password,
-      }),
-      // credentials: 'include', // if you want to receive cookies
-    });
-    const data = await response.json();
-    dispatch(setUser(data.user));
-    setUserData(data);
-    route.push('/pages/home');
-    console.log('Login response:', data);
-  } catch (error) {
-    console.error('Login error:', error);
-  }
-};
-  
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    try {
+      const response = await fetch("http://localhost:3000/user/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: Email,
+          password: password,
+        }),
+        credentials: 'include', // Enable this to receive cookies
+      });
+
+      if (!response.ok) {
+        throw new Error(`Login failed: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      
+      // Dispatch the user data with correct structure
+      dispatch(setUser({
+        email: data.user.email,
+        displayName: data.user.displayName,
+        photoURL: data.user.photoUrl || data.user.photoURL, // Handle both cases
+        isEmailVerified: data.user.isEmailVerified
+      }));
+      
+      setUserData(data);
+      route.push("/pages/home");
+      console.log("Login response:", data);
+    } catch (error) {
+      console.error("Login error:", error);
+      // Add user feedback here (e.g., show error message)
+    }
+  };
+
   return (
     <Container maxWidth="xs">
-      <Box sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <Box
+        sx={{
+          mt: 8,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
         <Typography component="h1" variant="h5">
           Sign In
         </Typography>
@@ -74,8 +98,13 @@ export default function LoginPage() {
           >
             Sign In
           </Button>
+          <Link href="/pages/signup" passHref>
+            <Typography variant="body2" color="text.secondary" align="center">
+              Don't have an account? Sign Up
+            </Typography>
+          </Link>
         </Box>
       </Box>
     </Container>
-  );
+  );  
 }

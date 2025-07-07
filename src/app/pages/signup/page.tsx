@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { TextField, Button, Container, Box, Typography } from "@mui/material";
+import Link from "next/link";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -30,6 +31,8 @@ export default function SignupPage() {
       }
       const data = await response.json();
       setUserData(data);
+      setEmail("");
+      setPassword("");
       console.log("SignUp response:", data);
     } catch (error: any) {
       setError(error.message || "SignUp error");
@@ -83,6 +86,12 @@ export default function SignupPage() {
           >
             Sign Up
           </Button>
+           <Link href="/pages/login" passHref>
+            <Typography variant="body2" color="text.secondary" align="center">
+              Already have an account? Login
+            </Typography>
+          </Link>
+          
           {error && (
             <Typography color="error" variant="body2" sx={{ mt: 1 }}>
               {error}
