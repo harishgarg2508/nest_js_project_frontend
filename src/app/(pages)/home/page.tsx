@@ -5,6 +5,8 @@ import { PhotoCamera } from "@mui/icons-material";
 import { useAppDispatch } from "@/app/redux/hooks";
 import { useAppSelector } from "@/app/redux/hooks";
 import { toggleEmailVerification, setUser } from "@/app/redux/slices/userSlice";
+import { Toaster, toast } from 'sonner';
+
 
 export default function HomePage() {
   const [open, setOpen] = React.useState(false);
@@ -129,6 +131,7 @@ export default function HomePage() {
       });
       const data = await response.json();
       if (response.ok) {
+        toast.success("OTP sent to your email!");
         setSentOtp(data.otp);
       } else {
         throw new Error(data.message || "Failed to send OTP");
@@ -154,6 +157,7 @@ export default function HomePage() {
   const handleVerify = async () => {
     setError("");
     if (otp === sentOtp) {
+      toast.success("OTP verified successfully!");
       setLoading(true);
       try {
         const response = await fetch("http://localhost:3000/auth/otp", {
@@ -317,6 +321,7 @@ export default function HomePage() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Toaster position="top-center" richColors />
     </Box>
   );
 }
