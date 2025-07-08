@@ -1,23 +1,6 @@
 "use client";
 import * as React from "react";
-import {
-  Card,
-  CardContent,
-  Typography,
-  Box,
-  Avatar,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  TextField,
-  Stack,
-  CircularProgress,
-  IconButton,
-  Badge,
-} from "@mui/material";
+import { Card, CardContent, Typography, Box, Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Stack, CircularProgress, IconButton, Badge, } from "@mui/material";
 import { PhotoCamera } from "@mui/icons-material";
 import { useAppDispatch } from "@/app/redux/hooks";
 import { useAppSelector } from "@/app/redux/hooks";
@@ -44,7 +27,6 @@ export default function HomePage() {
     name, email, avatar, isEmailVerified
   });
 
-  // Update local user state when Redux state changes
   React.useEffect(() => {
     setUserState({ name, email, avatar, isEmailVerified });
   }, [name, email, avatar, isEmailVerified]);
@@ -52,13 +34,11 @@ export default function HomePage() {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Validate file type
       if (!file.type.startsWith("image/")) {
         setUploadError("Please select a valid image file");
         return;
       }
 
-      // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         setUploadError("File size must be less than 5MB");
         return;
@@ -77,7 +57,6 @@ export default function HomePage() {
 
     setUploading(true);
 
-    // Create FormData for Cloudinary upload
     const uploadFormData = new FormData();
     uploadFormData.append("file", selectedFile);
     uploadFormData.append(
@@ -90,7 +69,6 @@ export default function HomePage() {
     );
 
     try {
-      // Upload to Cloudinary
       const cloudinaryResponse = await fetch(
         `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
         {
@@ -106,7 +84,6 @@ export default function HomePage() {
       const cloudinaryData = await cloudinaryResponse.json();
       const imageUrl = cloudinaryData.secure_url;
 
-      // Update user profile in your backend
       const updateResponse = await fetch('http://localhost:3000/user/update-avatar', {
         method: 'PATCH',
         headers: {

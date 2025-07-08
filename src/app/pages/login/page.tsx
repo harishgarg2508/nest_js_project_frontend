@@ -25,7 +25,7 @@ export default function LoginPage() {
           email: Email,
           password: password,
         }),
-        credentials: 'include', // Enable this to receive cookies
+        credentials: 'include', 
       });
 
       if (!response.ok) {
@@ -34,7 +34,6 @@ export default function LoginPage() {
 
       const data = await response.json();
       
-      // Dispatch the user data with correct structure
       dispatch(setUser({
         email: data.user.email,
         displayName: data.user.displayName,
@@ -47,7 +46,6 @@ export default function LoginPage() {
       console.log("Login response:", data);
     } catch (error) {
       console.error("Login error:", error);
-      // Add user feedback here (e.g., show error message)
     }
   };
 

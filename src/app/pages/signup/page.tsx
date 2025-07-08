@@ -22,7 +22,7 @@ export default function SignupPage() {
           email: email,
           password: password,
         }),
-        // credentials: "include", // if you want to receive cookies
+        // credentials: "include", 
       });
       if (!response.ok) {
         const err = await response.json();
